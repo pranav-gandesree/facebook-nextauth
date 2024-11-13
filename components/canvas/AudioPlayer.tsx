@@ -83,7 +83,7 @@ const AudioPlayer: React.FC = () => {
     const initializeAudioContext = () => {
       try {
         audioContextRef.current = new (window.AudioContext ||
-          (window as any).webkitAudioContext)();
+          (window).AudioContext)();
         analyserRef.current = audioContextRef.current.createAnalyser();
         analyserRef.current.fftSize = 256;
 
@@ -108,7 +108,7 @@ const AudioPlayer: React.FC = () => {
 
   useEffect(() => {
     let animationId: number;
-    let startTime = performance.now();
+    const startTime = performance.now();
 
     const draw = (timestamp: number) => {
       if (!canvasRef.current) return;
