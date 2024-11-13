@@ -9,11 +9,6 @@ const tracks = [
  
     },
     {
-      url: "/audio/Badass",
-      title: "Badass",
-
-    },
-    {
       url: "/audio/Chellamma.mp3",
       title: "Chellamma",
   
@@ -48,6 +43,7 @@ const tracks = [
       title: "YouAreMyLove",
   
     },
+   
   ];
   
   export default tracks;

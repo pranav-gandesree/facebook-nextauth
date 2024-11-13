@@ -10,6 +10,7 @@ import {
   Pause,
   SkipForward,
   SkipBack,
+  Shuffle,
 } from "lucide-react";
 import tracks from "@/lib/tracks";
 import Playlist from "./Playlist";
@@ -30,6 +31,8 @@ const AudioPlayer: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isClient, setIsClient] = useState(false);
+
+  const [isShuffle, setIsShuffle] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -59,7 +62,7 @@ const AudioPlayer: React.FC = () => {
       const value = Math.sin(i * 0.05 + time * 0.002) * 30 + 50;
       defaultFrequencyData.current[i] = value;
 
-      const barHeight = (value / 255) * canvas.height * 0.8;
+      const barHeight = (value / 255) * canvas.height * 1.5;
 
       const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
       //   gradient.addColorStop(0, '#2c3e50');
@@ -83,7 +86,7 @@ const AudioPlayer: React.FC = () => {
     const initializeAudioContext = () => {
       try {
         audioContextRef.current = new (window.AudioContext ||
-          (window).AudioContext)();
+          window.AudioContext)();
         analyserRef.current = audioContextRef.current.createAnalyser();
         analyserRef.current.fftSize = 256;
 
@@ -202,6 +205,10 @@ const AudioPlayer: React.FC = () => {
     }
   };
 
+  const toggleShuffle = () => {
+    setIsShuffle(!isShuffle);
+  };
+
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
     const rect = (e.target as HTMLDivElement).getBoundingClientRect();
@@ -209,6 +216,10 @@ const AudioPlayer: React.FC = () => {
     const newTime = (clickX / rect.width) * audioRef.current.duration;
     audioRef.current.currentTime = newTime;
     setProgress((newTime / audioRef.current.duration) * 100);
+    if (!isPlaying) {
+      setIsPlaying(true);
+      audioRef.current.play();
+    }
   };
 
   const handleVolumeToggle = () => {
@@ -244,8 +255,13 @@ const AudioPlayer: React.FC = () => {
   };
 
   const handleNextTrack = () => {
-    const nextIndex = (currentTrackIndex + 1) % tracks.length;
-    handleTrackChange(nextIndex);
+    if (isShuffle) {
+      const randomIndex = Math.floor(Math.random() * tracks.length);
+      handleTrackChange(randomIndex);
+    } else {
+      const nextIndex = (currentTrackIndex + 1) % tracks.length;
+      handleTrackChange(nextIndex);
+    }
 
     setTimeout(() => {
       if (audioRef.current) {
@@ -262,6 +278,12 @@ const AudioPlayer: React.FC = () => {
 
   const handleSongSelect = (index: number) => {
     handleTrackChange(index);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+    }, 0);
   };
 
   const updateProgress = () => {
@@ -326,11 +348,20 @@ const AudioPlayer: React.FC = () => {
                 <SkipForward />
               </Button>
 
+              <Button onClick={toggleShuffle}>
+                <Shuffle className={`${isShuffle ? "text-blue-500" : ""}`} />
+              </Button>
+
               <Slider
                 value={[volume * 100]}
                 onValueChange={handleVolumeChange}
-                className="w-32 cursor-pointer"
+                className="w-32 cursor-pointer rounded-md"
                 disabled={isMuted}
+                style={{
+                  background: `linear-gradient(to right, #5991FF ${
+                    volume * 100
+                  }%, #ddd ${volume * 100}%)`,
+                }}
               />
             </div>
 
