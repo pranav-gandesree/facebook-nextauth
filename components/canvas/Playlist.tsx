@@ -14,7 +14,7 @@ interface PlaylistProps {
 const Playlist: React.FC<PlaylistProps> = ({ tracks, currentTrackIndex, handleSongSelect }) => {
   return (
     <div className="mt-6 lg:mt-0">
-      <h4 className="text-lg text-white font-semibold mb-2">Playlist</h4>
+      <h4 className="text-xl text-purple-800 font-semibold ml-3 mb-2">Playlist</h4>
       <ul className="max-h-screen overflow-y-auto">
         {tracks.map((track, index) => (
           <li

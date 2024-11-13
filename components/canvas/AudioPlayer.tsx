@@ -205,9 +205,11 @@ const AudioPlayer: React.FC = () => {
     try {
       if (isPlaying) {
         await audioRef.current.pause();
+        
       } else {
         if (audioContextRef.current?.state === 'suspended') {
           await audioContextRef.current.resume();
+         
         }
         await audioRef.current.play();
       }
@@ -261,6 +263,13 @@ const AudioPlayer: React.FC = () => {
   const handleNextTrack = () => {
     const nextIndex = (currentTrackIndex + 1) % tracks.length;
     handleTrackChange(nextIndex);
+   
+  setTimeout(() => {
+    if (audioRef.current) {
+      audioRef.current.play(); 
+      setIsPlaying(true);
+    }
+  }, 0); 
   };
 
   const handlePreviousTrack = () => {
@@ -280,6 +289,7 @@ const AudioPlayer: React.FC = () => {
       setCurrentTime(audioRef.current.currentTime);
     }
   };
+
 
     const onLoadedMetadata = () => {
     if (audioRef.current) {
@@ -391,6 +401,7 @@ const AudioPlayer: React.FC = () => {
         src={currentTrack.url}
         onTimeUpdate={updateProgress}
         onLoadedMetadata={onLoadedMetadata}
+        onEnded={handleNextTrack}
       />
 
       <div className="text-center mb-4">
@@ -454,59 +465,5 @@ const AudioPlayer: React.FC = () => {
 };
 
 export default AudioPlayer;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
