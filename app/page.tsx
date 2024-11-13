@@ -1,9 +1,12 @@
+import AudioPlayer from "@/components/canvas/AudioPlayer"
 
 
 const page = () => {
   return (
-    <div>
-      home page
+
+      <div className=" m-8">
+        <AudioPlayer />
+
     </div>
   )
 }
